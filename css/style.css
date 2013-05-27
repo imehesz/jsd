@@ -1,0 +1,16 @@
+.test-code, .good-code{
+  background-color: #fafafa;
+  border: 2px solid #ddd;
+  padding: 10px;
+}
+input.input-code-test {
+  width: 100px;
+  color: green;
+  border: 1px solid orange;
+  padding: 2px;
+  margin: 2px;
+}
+.hidden{
+  display:none;
+}
+
