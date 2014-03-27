@@ -1,9 +1,11 @@
 var webApp = angular.module("webApp",[]);
 
-webApp.controller("AppController", function($scope){
+webApp.controller("AppController", function($scope, $sce){
   // angular goodness will come here ...
   $scope.lessons = [];
   $scope.activeLesson = null;
+  $scope.activePageContent = "";
+  $scope.activePageNum = 0;
   $scope.lessonNotFound = "";
   
   if (typeof JSD != "undefined") {
@@ -12,11 +14,33 @@ webApp.controller("AppController", function($scope){
   
   $scope.loadLesson = function(lName) {
     console.log("lName", lName);
+    $scope.activePageNum = 0;
     var lesson = _.find($scope.lessons,function(rw){ return rw.name == lName });
     if (lesson) {
       $scope.activeLesson = lesson;
+      setActivePageContent();
     } else {
       $scope.lessonNotFound = "Lesson Not Found :/";
+    }
+  }
+  
+  $scope.nextPage = function() {
+    if ($scope.activeLesson && $scope.activeLesson.pages) {
+      if ($scope.activePageNum != $scope.activeLesson.pages.length) $scope.activePageNum++;
+      setActivePageContent();
+    }
+  }
+  
+  $scope.prevPage = function() {
+    if($scope.activePageNum > 0) $scope.activePageNum--;
+    setActivePageContent();
+  }
+  
+  var setActivePageContent = function() {
+    $scope.activePageContent = "";
+    
+    if ($scope.activeLesson.pages[$scope.activePageNum].content) {
+      $scope.activePageContent = $sce.trustAsHtml($scope.activeLesson.pages[$scope.activePageNum].content);
     }
   }
 });

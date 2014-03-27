@@ -38,7 +38,19 @@ this one?<br/>\
 question mark?<br/>\
             </pre>\
             "
-          }
+          },
+          {
+            name: "factorials2",
+            label: "Factorials 2",
+            content: "<h3>Factorials Content #2</h3>\
+            This sdal adslk jalsdj is a test <i>HTML</i> content here to see whazzup.\
+            <pre>\
+what about<br/>\
+this one?<br/>\
+question mark?<br/>\
+            </pre>\
+            "
+          }          
         ],
         tests: [
           {
