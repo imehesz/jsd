@@ -1,5 +1,19 @@
 var webApp = angular.module("webApp",[]);
 
+webApp.directive("webappTestDirective", function(){
+  return {
+    restrict: "C",
+    replace: true,
+    scope:{
+      ngTest: "="
+    },
+    template: "<div>{{ngTest.name}}</div>",
+    link: function(scope,element,attr) {
+      // directive logic will come here ...
+    }
+  }
+});
+
 webApp.controller("AppController", function($scope, $sce){
   // angular goodness will come here ...
   $scope.lessons = [];
@@ -7,6 +21,8 @@ webApp.controller("AppController", function($scope, $sce){
   $scope.activePageContent = "";
   $scope.activePageNum = 0;
   $scope.lessonNotFound = "";
+  $scope.activeTestNum = 0;
+  $scope.activeTestContent = "";
   
   if (typeof JSD != "undefined") {
     $scope.lessons = JSD.lessons;
@@ -39,8 +55,18 @@ webApp.controller("AppController", function($scope, $sce){
   var setActivePageContent = function() {
     $scope.activePageContent = "";
     
-    if ($scope.activeLesson.pages[$scope.activePageNum].content) {
+    if ($scope.activeLesson && $scope.activeLesson.pages && $scope.activeLesson.pages[$scope.activePageNum].content) {
       $scope.activePageContent = $sce.trustAsHtml($scope.activeLesson.pages[$scope.activePageNum].content);
     }
   }
+  
+  $scope.nextTest = function() {
+    if ($scope.activeLesson && $scope.activeLesson.tests) {
+      if ($scope.activeTestNum != $scope.activeLesson.tests.length) $scope.activeTestNum++;
+    }
+  }
+  
+  $scope.prevTest = function() {
+    if($scope.activeTestNum > 0) $scope.activeTestNum--;
+  }  
 });

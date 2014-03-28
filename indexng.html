@@ -11,18 +11,35 @@
   </head>
   <body>
     <div ng-controller="AppController">
-      <h1>
-        Lessons
+      <h1>Lessons</h1>
         <div ng-repeat="lesson in lessons">
           <button type="button" ng-click="loadLesson(lesson.name)">{{lesson.label}}</button>
           <div ng-show="activeLesson==lesson">
-            <h3>{{lesson.pages[activePageNum].label}}</h3>
-            <p ng-bind-html="activePageContent"></p>
-            <button type="button" ng-click="prevPage()" ng-disabled="activePageNum==0"><< Prev</button>
-            <button type="button" ng-click="nextPage()" ng-disabled="activePageNum==lesson.pages.length-1">>> Next</button>
+            <div class="lesson-wrapper" ng-show="!openTests">
+              <h2>{{lesson.pages[activePageNum].label}}</h2>
+              <p ng-bind-html="activePageContent"></p>
+              <div ng-show="activeLesson.pages.length>1">
+                <button type="button" ng-click="prevPage()" ng-disabled="activePageNum==0"><< Prev</button>
+                <button type="button" ng-click="nextPage()" ng-disabled="activePageNum==lesson.pages.length-1">>> Next</button>
+                <button type="button" ng-click="openTests=true">Tests</button>
+              </div>
+            </div>
+            <div class="tests-wrapper" ng-show="openTests">
+              <h3>{{lesson.tests[activeTestNum].label}}</h3>
+
+              <div ng-repeat="test in lesson.tests">
+                <div ng-show="test.name==lesson.tests[activeTestNum].name" class="webapp-test-directive" ng-test="lesson.tests[activeTestNum]"></div>
+              </div>
+              
+              <div ng-show="activeLesson.tests.length>1">
+                <button type="button" ng-click="prevTest()" ng-disabled="activeTestNum==0"><< Prev</button>
+                <button type="button" ng-click="nextTest()" ng-disabled="activeTestNum==lesson.tests.length-1">>> Next</button>
+                <button type="button" ng-click="openTests=false">Close Tests</button>
+              </div>              
+            </div>
+            <hr />
           </div>
         </div>
-      </h1>      
     </div>
   </body>
 </html>
