@@ -24,18 +24,8 @@
                 <button type="button" ng-click="openTests=true">Tests</button>
               </div>
             </div>
-            <div class="tests-wrapper" ng-show="openTests">
-              <h3>{{lesson.tests[activeTestNum].label}}</h3>
-
-              <div ng-repeat="test in lesson.tests">
-                <div ng-show="test.name==lesson.tests[activeTestNum].name" class="webapp-test-directive" ng-test="lesson.tests[activeTestNum]"></div>
-              </div>
-              
-              <div ng-show="activeLesson.tests.length>1">
-                <button type="button" ng-click="prevTest()" ng-disabled="activeTestNum==0"><< Prev</button>
-                <button type="button" ng-click="nextTest()" ng-disabled="activeTestNum==lesson.tests.length-1">>> Next</button>
-                <button type="button" ng-click="openTests=false">Close Tests</button>
-              </div>              
+            <div class="tests-wrapper" ng-show="true||openTests">
+              <div class="webapp-tests-directive" open-tests="openTests" ng-tests="lesson.tests"></div>
             </div>
             <hr />
           </div>
