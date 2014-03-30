@@ -1,6 +1,6 @@
-var webApp = angular.module("webApp",[]);
+var webApp = angular.module("webApp",["hljs"]);
 
-webApp.directive("webappTestsDirective", function($sce){
+webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
   return {
     restrict: "C",
     replace: true,
@@ -12,12 +12,35 @@ webApp.directive("webappTestsDirective", function($sce){
                   <h3>{{ngTests[activeTestNum].label}}</h3>\
                     <div ng-bind-html="parsedCode">{{parsedCode}}</div>\
                     <div ng-show="ngTests.length>1">\
+                      <pre><code>var d=5;</code></pre>\
                       <button type="button" ng-click="prevTest()" ng-disabled="activeTestNum==0"><< Prev</button>\
                       <button type="button" ng-click="nextTest()" ng-disabled="activeTestNum==ngTests.length-1">>> Next</button>\
                       <button type="button" ng-click="openTests=false">Close Tests</button>\
                     </div>\
               </div>',
+    compile: function compile(tElement, tAttrs, transclude) {
+        console.log("running once ...");
+            
+        var someFn = function() {
+          $("pre code").each(function(i,e){
+            hljs.highlightBlock(e);
+          });
+        }
+        var t = setTimeout(someFn, 0);
+        
+        return {
+          pre: function preLink(scope, iElement, iAttrs, controller) {
+            scope.parsedCode =  $sce.trustAsHtml("<pre><code>var d=25;</code></pre>");
+          },
+          post: function postLink(scope, iElement, iAttrs, controller) {
+            console.log("post");
+          }
+        }
+        // or
+        // return function postLink( ... ) { ... }
+    },
     link: function(scope,element,attr) {
+      console.log("im not running anymore :/");
       scope.activeTestNum = 0;
       scope.activeTestContent = "";      
       // directive logic will come here ...
@@ -29,7 +52,9 @@ webApp.directive("webappTestsDirective", function($sce){
         if (rawCode) {
           rawCode = rawCode.replace(/\[br\]/g,'<br>');
         }
-        scope.parsedCode = $sce.trustAsHtml(rawCode);
+        //scope.parsedCode = $sce.trustAsHtml( "<pre hljs>" + rawCode + "</pre>");
+        scope.parsedCode = $sce.trustAsHtml('<pre hljs>var d=20;</pre>');
+        // $compile(scope.parsedCode)(scope);
       });
   
       scope.nextTest = function() {
