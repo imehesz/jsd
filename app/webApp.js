@@ -10,7 +10,7 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
     },
     template: '<div>\
                   <h3>{{ngTests[activeTestNum].label}}</h3>\
-                    <div ng-bind-html="parsedCode">{{parsedCode}}</div>\
+                    <div ng-bind-html="parsedCode"></div>\
                     <div ng-show="ngTests.length>1">\
                       <pre><code>var d=5;</code></pre>\
                       <button type="button" ng-click="prevTest()" ng-disabled="activeTestNum==0"><< Prev</button>\
@@ -18,43 +18,26 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
                       <button type="button" ng-click="openTests=false">Close Tests</button>\
                     </div>\
               </div>',
-    compile: function compile(tElement, tAttrs, transclude) {
-        console.log("running once ...");
-            
-        var someFn = function() {
-          $("pre code").each(function(i,e){
-            hljs.highlightBlock(e);
-          });
-        }
-        var t = setTimeout(someFn, 0);
-        
-        return {
-          pre: function preLink(scope, iElement, iAttrs, controller) {
-            scope.parsedCode =  $sce.trustAsHtml("<pre><code>var d=25;</code></pre>");
-          },
-          post: function postLink(scope, iElement, iAttrs, controller) {
-            console.log("post");
-          }
-        }
-        // or
-        // return function postLink( ... ) { ... }
-    },
     link: function(scope,element,attr) {
-      console.log("im not running anymore :/");
-      scope.activeTestNum = 0;
-      scope.activeTestContent = "";      
-      // directive logic will come here ...
+      // highlighting each test code (TODO look for another way, or at least only run highlight within the lesson)
+      var someFn = function() {
+        $("pre code").each(function(i,e) {
+          hljs.highlightBlock(e);
+        });
+      }
       
-      scope.$watch("activeTestNum", function(o,n){
+      scope.activeTestNum = 0;
+      scope.activeTestContent = "";
+      
+      scope.$watch("activeTestNum", function(o,n) {
         var rawCode = "";
         rawCode = typeof scope.ngTests != "undefined" ? scope.ngTests[scope.activeTestNum].code : "";
         
         if (rawCode) {
           rawCode = rawCode.replace(/\[br\]/g,'<br>');
         }
-        //scope.parsedCode = $sce.trustAsHtml( "<pre hljs>" + rawCode + "</pre>");
-        scope.parsedCode = $sce.trustAsHtml('<pre hljs>var d=20;</pre>');
-        // $compile(scope.parsedCode)(scope);
+        scope.parsedCode = $sce.trustAsHtml( "<pre><code>" + rawCode + "</code></pre>");
+        setTimeout(someFn, 0);
       });
   
       scope.nextTest = function() {
