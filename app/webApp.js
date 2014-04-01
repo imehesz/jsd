@@ -19,25 +19,29 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
                     </div>\
               </div>',
     link: function(scope,element,attr) {
+      scope.activeTestNum = 0;
+      scope.activeTestContent = "";
+      
       // highlighting each test code (TODO look for another way, or at least only run highlight within the lesson)
       var someFn = function() {
-        $("pre code").each(function(i,e) {
+        $(element).find("pre code").each(function(i,e){
           hljs.highlightBlock(e);
         });
       }
       
-      scope.activeTestNum = 0;
-      scope.activeTestContent = "";
-      
-      scope.$watch("activeTestNum", function(o,n) {
+      var parseTest = function() {
         var rawCode = "";
         rawCode = typeof scope.ngTests != "undefined" ? scope.ngTests[scope.activeTestNum].code : "";
-        
+          
         if (rawCode) {
           rawCode = rawCode.replace(/\[br\]/g,'<br>');
         }
         scope.parsedCode = $sce.trustAsHtml( "<pre><code>" + rawCode + "</code></pre>");
         setTimeout(someFn, 0);
+      }
+
+      scope.$watch("activeTestNum", function(o,n) {
+        if ( o !== n) { parseTest(); }
       });
   
       scope.nextTest = function() {
@@ -49,6 +53,8 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
       scope.prevTest = function() {
         if(scope.activeTestNum > 0) scope.activeTestNum--;
       }
+      
+      parseTest();
     }
   }
 });

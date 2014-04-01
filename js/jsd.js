@@ -142,7 +142,48 @@ var sort = function (list) {[br]\
       // Javascript Design Patterns 
       {
         name: "designpats",
-        label: "Design Patterns"
+        label: "Design Patterns",
+       pages:[
+          {
+            name: "moo",
+            label: "Moo",
+            content: "<h3>Moo!</h3>\
+            This is a test <b>HTML</b> content here to see whazzup.\
+            <pre>\
+what about<br/>\
+this one?<br/>\
+question mark?<br/>\
+            </pre>\
+            "
+          }
+        ],
+        
+        tests: [
+          {
+            name: "what-does-the-cow-say",
+            label: "What does the cow say?",
+            code: "\
+/**[br]\
+ * it determines if string is moo[br]\
+ * @param str String[br]\
+ * @return boolean[br]\
+ */[br]\
+function isMoo(str){[br]\
+  if( [tt]str=='moo'[ett] ){[br]\
+    return [tt]true[ett];[br]\
+  } else {[br]\
+    return [tt]false[ett];[br]\
+  }[br]\
+}\
+            ",
+            takeouts: {
+              0:[],
+              1:[1],
+              2:[1,3],
+              3:[1,2,3]
+            }
+          }]        
+        
       }
 
     ]
