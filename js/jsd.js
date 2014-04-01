@@ -169,7 +169,7 @@ question mark?<br/>\
  * @return boolean[br]\
  */[br]\
 function isMoo(str){[br]\
-  if( [tt]str=='moo'[ett] ){[br]\
+  if( str==[tt]'moo'[ett] ){[br]\
     return [tt]true[ett];[br]\
   } else {[br]\
     return [tt]false[ett];[br]\

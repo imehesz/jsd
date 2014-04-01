@@ -31,10 +31,23 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
       
       var parseTest = function() {
         var rawCode = "";
-        rawCode = typeof scope.ngTests != "undefined" ? scope.ngTests[scope.activeTestNum].code : "";
-          
-        if (rawCode) {
+        var currentTest = $.isPlainObject(scope.ngTests[scope.activeTestNum]) ? scope.ngTests[scope.activeTestNum] : null;
+
+        if (currentTest) {
+          rawCode = currentTest.code;
           rawCode = rawCode.replace(/\[br\]/g,'<br>');
+        
+         // parse questions
+          var takeouts = currentTest.takeouts[JSD.level];
+          var inputs = [];
+          
+          $.each(takeouts, function(i,pos){
+            // had to add an empty tt-ett to keep track of the number of fields, so we can successfully use the Nth Match tool!
+            inputs.push({index:pos, textField:"<input class=\"input-code-test\" id=\"" + currentTest.name + "-solution-"+pos+"\" type=\"text\"/><span class=\"hidden\"></span>[tt][ett]"});
+          });
+          $.each(inputs, function(i,input){
+            rawCode = replaceNthMatch( rawCode,/(\[tt\].*?\[ett\])/,input.index, input.textField);
+          });
         }
         scope.parsedCode = $sce.trustAsHtml( "<pre><code>" + rawCode + "</code></pre>");
         setTimeout(someFn, 0);
