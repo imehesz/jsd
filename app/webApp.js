@@ -11,7 +11,7 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
     template: '<div>\
                   <h3>{{ngTests[activeTestNum].label}}</h3>\
                     <div ng-bind-html="parsedCode"></div>\
-                    <div ng-show="ngTests.length>1">\
+                    <div ng-show="ngTests.length>0">\
                       <pre><code>var d=5;</code></pre>\
                       <button type="button" ng-click="prevTest()" ng-disabled="activeTestNum==0"><< Prev</button>\
                       <button type="button" ng-click="nextTest()" ng-disabled="activeTestNum==ngTests.length-1">>> Next</button>\
