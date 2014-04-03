@@ -55,3 +55,38 @@ var replaceNthMatch = function (original, pattern, n, replace) {
   return parts.join('');
 
   }
+
+var returnNthMatch = function (original, pattern, n) {
+    var parts, tempParts;
+
+    if (pattern.constructor === RegExp) {
+
+      // If there's no match, bail
+      if (original.search(pattern) === -1) {
+        return original;
+      }
+
+      // Every other item should be a matched capture group;
+      // between will be non-matching portions of the substring
+      parts = original.split(pattern);
+
+      // If there was a capture group, index 1 will be
+      // an item that matches the RegExp
+      if (parts[1].search(pattern) !== 0) {
+        throw {name: "ArgumentError", message: "RegExp must have a capture group"};
+      }
+    } else {
+      throw {name: "ArgumentError", message: "Must provide a RegExp"};
+    }
+
+    // Parens are unnecessary, but explicit. :)
+    indexOfNthMatch = (n * 2) - 1;
+
+  if (parts[indexOfNthMatch] === undefined) {
+    // There IS no Nth match
+    return original;
+  }
+  
+  // hackery, but this is exactly what we need ...
+  return parts[indexOfNthMatch];
+}

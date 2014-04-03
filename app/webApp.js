@@ -11,8 +11,8 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
     template: '<div>\
                   <h3>{{ngTests[activeTestNum].label}}</h3>\
                     <div ng-bind-html="parsedCode"></div>\
+                    <button ng-click="solve()">Solve</button>\
                     <div ng-show="ngTests.length>0">\
-                      <pre><code>var d=5;</code></pre>\
                       <button type="button" ng-click="prevTest()" ng-disabled="activeTestNum==0"><< Prev</button>\
                       <button type="button" ng-click="nextTest()" ng-disabled="activeTestNum==ngTests.length-1">>> Next</button>\
                       <button type="button" ng-click="openTests=false">Close Tests</button>\
@@ -21,6 +21,7 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
     link: function(scope,element,attr) {
       scope.activeTestNum = 0;
       scope.activeTestContent = "";
+      var goodAnswers = [];
       
       // highlighting each test code (TODO look for another way, or at least only run highlight within the lesson)
       var someFn = function() {
@@ -43,13 +44,16 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
           
           $.each(takeouts, function(i,pos){
             // had to add an empty tt-ett to keep track of the number of fields, so we can successfully use the Nth Match tool!
-            inputs.push({index:pos, textField:"<input class=\"input-code-test\" id=\"" + currentTest.name + "-solution-"+pos+"\" type=\"text\"/><span class=\"hidden\"></span>[tt][ett]"});
+            inputs.push({index:pos, textField:"<input ng-model=\"answers[" + pos + "]\" class=\"input-code-test user-answer\" id=\"" + currentTest.name + "-answer-"+pos+"\" type=\"text\"/><span class=\"hidden\"></span>[tt][ett]"});
           });
           $.each(inputs, function(i,input){
-            rawCode = replaceNthMatch( rawCode,/(\[tt\].*?\[ett\])/,input.index, input.textField);
+            var regPat = /(\[tt\].*?\[ett\])/;
+            
+            goodAnswers.push(returnNthMatch(rawCode,regPat,input.index).replace("[tt]","").replace("[ett]",""));
+            rawCode = replaceNthMatch( rawCode,regPat,input.index, input.textField);
           });
         }
-        scope.parsedCode = $sce.trustAsHtml( "<pre><code>" + rawCode + "</code></pre>");
+        scope.parsedCode = $sce.trustAsHtml("<pre><code>" + rawCode + "</code></pre>");
         setTimeout(someFn, 0);
       }
 
@@ -65,6 +69,14 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
       
       scope.prevTest = function() {
         if(scope.activeTestNum > 0) scope.activeTestNum--;
+      }
+      
+      scope.solve = function () {
+        // would have been nice with dynamic models ... but ... WHATEVER
+        element.find(".user-answer").each(function(i,e){
+          var userAnswer = $(e).val();
+          console.log("user answer #",i,$(e).val(), goodAnswers[i] == userAnswer);
+        });
       }
       
       parseTest();
