@@ -1,6 +1,6 @@
   JSD = {
     debug: true,
-    level: 1,
+    level: 3,
     inputs: [],
     lessons: [
       /*
@@ -105,7 +105,7 @@ var sort = function (list) {[br]\
       len=[tt]list.length-1[ett],[br]\
       hasSwap=true;[br]\
 [br]\
-  for( var i=[tt]0;i&lt;len[ett];i++ ) {[br]\
+  for( var i=[tt]0[ett];i>len;i++ ) {[br]\
     hasSwap = false;[br]\
     for (var j=0, swapping,[tt]endIndex=len-i;j&lt;endIndex[ett]; j++) {[br]\
       comparisons++;[br]\
@@ -169,7 +169,7 @@ question mark?<br/>\
  * @return boolean[br]\
  */[br]\
 function isMoo(str){[br]\
-  if( str==[tt]'moo'[ett] ){[br]\
+  if( str==[tt]\"moo\"[ett] ){[br]\
     return [tt]true[ett];[br]\
   } else {[br]\
     return [tt]false[ett];[br]\

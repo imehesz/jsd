@@ -5,11 +5,25 @@
 }
 input.input-code-test {
   width: 100px;
-  color: green;
-  border: 1px solid orange;
+  color: #333;
+  border: 1px solid #e1e1e8;
   padding: 2px;
   margin: 2px;
+  background-color: #fefefe;
 }
+
+input.user-answer.wrong {
+  border: 1px solid #ebccd1;
+  background-color: #f2dede;
+  color: #a94442 ;
+}
+
+input.user-answer.correct {
+  border: 1px solid #d6e9c6 ;
+  background-color: #dff0d8;
+  color: #3c763d;
+}
+
 .hidden{
   display:none;
 }

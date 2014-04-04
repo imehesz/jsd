@@ -33,6 +33,7 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
       var parseTest = function() {
         var rawCode = "";
         var currentTest = $.isPlainObject(scope.ngTests[scope.activeTestNum]) ? scope.ngTests[scope.activeTestNum] : null;
+        goodAnswers = [];
 
         if (currentTest) {
           rawCode = currentTest.code;
@@ -53,7 +54,7 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
             rawCode = replaceNthMatch( rawCode,regPat,input.index, input.textField);
           });
         }
-        scope.parsedCode = $sce.trustAsHtml("<pre><code>" + rawCode + "</code></pre>");
+        scope.parsedCode = $sce.trustAsHtml("<pre><code>" + rawCode.replace(/\[tt\]/g,"").replace(/\[ett\]/g,"") + "</code></pre>");
         setTimeout(someFn, 0);
       }
 
@@ -73,9 +74,17 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
       
       scope.solve = function () {
         // would have been nice with dynamic models ... but ... WHATEVER
-        element.find(".user-answer").each(function(i,e){
+        element.find(".user-answer").each(function(i,e) {
           var userAnswer = $(e).val();
-          console.log("user answer #",i,$(e).val(), goodAnswers[i] == userAnswer);
+          var goodAnswer = goodAnswers[i];
+          console.log("user answer #",i,$(e).val(), " vs good: ", goodAnswer, goodAnswer == userAnswer);
+          $(e).attr("title", goodAnswer);
+          $(e).attr("disabled", "true");
+          if(goodAnswer == userAnswer) {
+            $(e).addClass("correct");
+          } else {
+            $(e).addClass("wrong");
+          }
         });
       }
       
