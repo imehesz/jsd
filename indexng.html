@@ -19,6 +19,8 @@
   <body>
     <div ng-controller="AppController">
       <h1>Lessons</h1>
+      <h2>Time: {{timer.time}}</h2>
+      <button ng-click="timer.start()">start</button> <button ng-click="timer.stop()">stop</button> <button ng-click="timer.reset()">reset</button>
         <div ng-repeat="lesson in lessons">
           <button type="button" ng-click="loadLesson(lesson.name)">{{lesson.label}}</button>
           <div ng-show="activeLesson==lesson">

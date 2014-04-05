@@ -101,6 +101,24 @@ webApp.controller("AppController", function($scope, $sce){
   $scope.activePageNum = 0;
   $scope.lessonNotFound = "";
   
+  $scope.timer = {
+    running: false,
+    time: 0,
+    start: function() {
+      $scope.timer.timeVar = setInterval(function(){
+        $scope.timer.time++;
+        $scope.$apply();
+      }, 1000);
+    },
+    stop: function() {
+      clearInterval($scope.timer.timeVar);
+    },
+    reset: function() {
+      $scope.timer.stop();
+      $scope.timer.time = 0;
+    }
+  };
+  
   if (typeof JSD != "undefined") {
     $scope.lessons = JSD.lessons;
   }
