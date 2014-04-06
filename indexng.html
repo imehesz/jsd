@@ -20,9 +20,9 @@
     <div ng-controller="AppController">
       <h1>Lessons</h1>
       <h2>Time: {{timer.time}}</h2>
-      <button ng-click="timer.start()">start</button> <button ng-click="timer.stop()">stop</button> <button ng-click="timer.reset()">reset</button>
+      <button ng-click="timer.reset()">reset</button>
         <div ng-repeat="lesson in lessons">
-          <button type="button" ng-click="loadLesson(lesson.name)">{{lesson.label}}</button>
+          <button type="button" ng-click="loadLesson(lesson.name);">{{lesson.label}}</button>
           <div ng-show="activeLesson==lesson">
             <div class="lesson-wrapper" ng-show="!openTests">
               <h2>{{lesson.pages[activePageNum].label}}</h2>
@@ -34,7 +34,7 @@
               </div>
             </div>
             <div class="tests-wrapper" ng-show="openTests">
-              <div class="webapp-tests-directive" open-tests="openTests" ng-tests="lesson.tests"></div>
+              <div class="webapp-tests-directive"></div>
             </div>
             <hr />
           </div>

@@ -4,10 +4,6 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
   return {
     restrict: "C",
     replace: true,
-    scope:{
-      ngTests: "=",
-      openTests: "="
-    },
     template: '<div>\
                   <h3>{{ngTests[activeTestNum].label}}</h3>\
                     <div ng-bind-html="parsedCode"></div>\
@@ -18,10 +14,18 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
                       <button type="button" ng-click="openTests=false">Close Tests</button>\
                     </div>\
               </div>',
-    link: function(scope,element,attr) {
+    link: function(scope,element) {
       scope.activeTestNum = 0;
       scope.activeTestContent = "";
+      scope.ngTests = scope.lesson.tests;
       var goodAnswers = [];
+      
+      scope.$watch("openTests", function(nVal,oVal) {
+        if (oVal !== nVal) {
+          if (nVal) scope.timer.start();
+          else scope.timer.stop();
+        }
+      });      
       
       // highlighting each test code (TODO look for another way, or at least only run highlight within the lesson)
       var someFn = function() {
@@ -100,6 +104,7 @@ webApp.controller("AppController", function($scope, $sce){
   $scope.activePageContent = "";
   $scope.activePageNum = 0;
   $scope.lessonNotFound = "";
+  $scope.openTests = false;
   
   $scope.timer = {
     running: false,
@@ -119,6 +124,13 @@ webApp.controller("AppController", function($scope, $sce){
     }
   };
   
+  $scope.$watch("openTests", function(oVal,nVal) {
+    if (oVal !== nVal) {
+      if (nVal) console.log("STARTING TESTS!");
+      else console.log("PAUSING TESTS!");
+    }
+  });
+  
   if (typeof JSD != "undefined") {
     $scope.lessons = JSD.lessons;
   }
@@ -132,6 +144,9 @@ webApp.controller("AppController", function($scope, $sce){
     } else {
       $scope.lessonNotFound = "Lesson Not Found :/";
     }
+    
+    // looks like we have to manually pause the `timer`
+    $scope.timer.stop();
   }
   
   $scope.nextPage = function() {
