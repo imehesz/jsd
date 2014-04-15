@@ -2,6 +2,32 @@
     debug: true,
     level: 3,
     inputs: [],
+    /*
+      // TODO this is just a plan for now
+      {
+        name: "first-test-award",
+        label: "First Test Award",
+        icon: {
+          url: "http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-11/256/number-1-icon.png"
+        }
+      }
+    */    
+    awards: {
+      "firstTestAward": {
+        name: "firstTestAward",
+        label: "First Test Award",
+        icon: {
+          url: "http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-11/256/number-1-icon.png"
+        }
+      },
+      "thirtySecondsAward": {
+        name: "thirtySecondsAward",
+        label: "30 Seconds Award",
+        icon: {
+          url: "http://www.flaticon.com/png/256/16455.png"
+        }
+      }
+    },
     lessons: [
       /*
        {

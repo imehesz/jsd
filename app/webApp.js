@@ -1,6 +1,6 @@
 var webApp = angular.module("webApp",["hljs"]);
 
-webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
+webApp.directive("webappTestsDirective", function($sce,$compile,$timeout,awardFactory){
   return {
     restrict: "C",
     replace: true,
@@ -72,6 +72,8 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
         if (scope.ngTests) {
           if (scope.activeTestNum != scope.ngTests.length) scope.activeTestNum++;
         }
+        
+        awardFactory.addAward(JSD.awards.firstTestAward);
       }
       
       scope.restartTest = function() {
@@ -106,7 +108,22 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
   }
 });
 
-webApp.controller("AppController", function($scope, $sce){
+webApp.factory("awardFactory", function() {
+  var userAwards = [];
+  return {
+    addAward: function(awardObj) {
+      userAwards.push({
+        dateTime: _.now(),
+        awardObj:awardObj
+      });
+    },
+    getAwards: function() {
+      return userAwards;
+    }
+  }
+});
+
+webApp.controller("AppController", function($scope, $sce, awardFactory) {
   // angular goodness will come here ...
   $scope.lessons = [];
   $scope.activeLesson = null;
@@ -114,6 +131,7 @@ webApp.controller("AppController", function($scope, $sce){
   $scope.activePageNum = 0;
   $scope.lessonNotFound = "";
   $scope.openTests = false;
+  $scope.userAwards = awardFactory.getAwards();
   
   $scope.timer = {
     running: false,
@@ -133,10 +151,11 @@ webApp.controller("AppController", function($scope, $sce){
     }
   };
   
-  $scope.$watch("openTests", function(oVal,nVal) {
-    if (oVal !== nVal) {
-      if (nVal) console.log("STARTING TESTS!");
-      else console.log("PAUSING TESTS!");
+  $scope.$watch("timer.time", function(nVal, oVal){
+    if (nVal !== oVal) {
+      if (nVal == 30) {
+        awardFactory.addAward(JSD.awards.thirtySecondsAward);
+      }
     }
   });
   
