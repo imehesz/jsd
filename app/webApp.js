@@ -11,12 +11,14 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
                     <div ng-show="ngTests.length>0">\
                       <button type="button" ng-click="prevTest()" ng-disabled="activeTestNum==0"><< Prev</button>\
                       <button type="button" ng-click="nextTest()" ng-disabled="activeTestNum==ngTests.length-1">>> Next</button>\
+                      <button type="button" ng-click="restartTest()" ng-disabled="!isSolved">Redo</button>\
                       <button type="button" ng-click="openTests=false">Close Tests</button>\
                     </div>\
               </div>',
     link: function(scope,element) {
       scope.activeTestNum = 0;
       scope.activeTestContent = "";
+      scope.isSolved = false;
       scope.ngTests = scope.lesson.tests;
       var goodAnswers = [];
       
@@ -72,11 +74,18 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout){
         }
       }
       
+      scope.restartTest = function() {
+        scope.isSolved = false;
+        element.find(".user-answer").removeClass("wrong").removeClass("correct").attr("disabled", false);
+        parseTest();
+      }
+      
       scope.prevTest = function() {
         if(scope.activeTestNum > 0) scope.activeTestNum--;
       }
       
       scope.solve = function () {
+        scope.isSolved = true;
         // would have been nice with dynamic models ... but ... WHATEVER
         element.find(".user-answer").each(function(i,e) {
           var userAnswer = $(e).val();
