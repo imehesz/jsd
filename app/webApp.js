@@ -20,7 +20,10 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout,awardFa
       scope.activeTestContent = "";
       scope.isSolved = false;
       scope.ngTests = scope.lesson.tests;
+      
       var goodAnswers = [];
+      var points = 0;
+      var percent = 0;
       
       scope.$watch("openTests", function(nVal,oVal) {
         if (oVal !== nVal) {
@@ -97,6 +100,33 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout,awardFa
           $(e).attr("disabled", "true");
           if(goodAnswer == userAnswer) {
             $(e).addClass("correct");
+            
+            // looking for the lessonPointsObject on the current level
+            var lessonPointsObj = _.find(scope.userPoints.lessonPoints, function(lessonObj) { return lessonObj.name == scope.activeLesson.name && lessonObj.level == JSD.level; });
+            if (lessonPointsObj) {
+              // if we got it, we just simply increase the points
+              lessonPointsObj.points++;
+            } else {
+              // if not, we got a lotta stuff to do :/
+              // 1) we have to figure out what the max points available on this level
+              var maxPoints = 0;
+              _.each(scope.activeLesson.tests, function(curTest, idx){
+                if (curTest.takeouts[JSD.level]) {
+                  maxPoints += curTest.takeouts[JSD.level].length;
+                } else {
+                  maxPoints += _.last(curTest.takeouts.length);
+                }
+              });
+              
+              // insert the new lessonObject
+              scope.userPoints.lessonPoints.push({
+                name: scope.activeLesson.name,
+                level: JSD.level,
+                points: 1,
+                maxPoints: maxPoints
+              });
+            }
+
           } else {
             $(e).addClass("wrong");
           }
@@ -132,6 +162,11 @@ webApp.controller("AppController", function($scope, $sce, awardFactory) {
   $scope.lessonNotFound = "";
   $scope.openTests = false;
   $scope.userAwards = awardFactory.getAwards();
+  $scope.userPoints = {
+    lessonPoints: [],
+    currentTest: 0,
+    currentTestPecent: 0
+  }
   
   $scope.timer = {
     running: false,
