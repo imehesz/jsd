@@ -9,8 +9,8 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout,awardFa
                     <div ng-bind-html="parsedCode"></div>\
                     <button ng-click="solve()">Solve</button>\
                     <div ng-show="ngTests.length>0">\
-                      <button type="button" ng-click="prevTest()" ng-disabled="activeTestNum==0"><< Prev</button>\
-                      <button type="button" ng-click="nextTest()" ng-disabled="activeTestNum==ngTests.length-1">>> Next</button>\
+                      <!-- <button type="button" ng-click="prevTest()" ng-disabled="activeTestNum==0"><< Prev</button> -->\
+                      <button type="button" ng-click="nextTest()" ng-disabled="activeTestNum==ngTests.length-1||!isSolved">Next</button>\
                       <button type="button" ng-click="restartTest()" ng-disabled="!isSolved">Redo</button>\
                       <button type="button" ng-click="openTests=false">Close Tests</button>\
                     </div>\
@@ -30,7 +30,11 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout,awardFa
           if (nVal) scope.timer.start();
           else scope.timer.stop();
         }
-      });      
+      });
+      
+      scope.$watch("userLevel", function(){
+        parseTest();
+      });
       
       // highlighting each test code (TODO look for another way, or at least only run highlight within the lesson)
       var someFn = function() {
@@ -49,7 +53,7 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout,awardFa
           rawCode = rawCode.replace(/\[br\]/g,'<br>');
         
          // parse questions
-          var takeouts = currentTest.takeouts[JSD.level];
+          var takeouts = currentTest.takeouts[scope.userLevel];
           var inputs = [];
           
           $.each(takeouts, function(i,pos){
@@ -73,7 +77,9 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout,awardFa
   
       scope.nextTest = function() {
         if (scope.ngTests) {
+          scope.isSolved = false;
           if (scope.activeTestNum != scope.ngTests.length) scope.activeTestNum++;
+          // scope.userPoints.currentTestPercent = 0;
         }
         
         awardFactory.addAward(JSD.awards.firstTestAward);
@@ -102,7 +108,7 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout,awardFa
             $(e).addClass("correct");
             
             // looking for the lessonPointsObject on the current level
-            var lessonPointsObj = _.find(scope.userPoints.lessonPoints, function(lessonObj) { return lessonObj.name == scope.activeLesson.name && lessonObj.level == JSD.level; });
+            var lessonPointsObj = _.find(scope.userPoints.lessonPoints, function(lessonObj) { return lessonObj.name == scope.activeLesson.name && lessonObj.level == scope.userLevel; });
             if (lessonPointsObj) {
               // if we got it, we just simply increase the points
               lessonPointsObj.points++;
@@ -111,22 +117,25 @@ webApp.directive("webappTestsDirective", function($sce,$compile,$timeout,awardFa
               // 1) we have to figure out what the max points available on this level
               var maxPoints = 0;
               _.each(scope.activeLesson.tests, function(curTest, idx){
-                if (curTest.takeouts[JSD.level]) {
-                  maxPoints += curTest.takeouts[JSD.level].length;
+                if (curTest.takeouts[scope.userLevel]) {
+                  maxPoints += curTest.takeouts[scope.userLevel].length;
                 } else {
                   maxPoints += _.last(curTest.takeouts.length);
                 }
               });
               
-              // insert the new lessonObject
-              scope.userPoints.lessonPoints.push({
+              lessonPointsObj = {
                 name: scope.activeLesson.name,
-                level: JSD.level,
+                level: scope.userLevel,
                 points: 1,
                 maxPoints: maxPoints
-              });
+              };
+              
+              // insert the new lessonObject
+              scope.userPoints.lessonPoints.push(lessonPointsObj);
             }
-
+            
+            scope.userPoints.currentTestPercent = Math.round((lessonPointsObj.points/lessonPointsObj.maxPoints)*100);
           } else {
             $(e).addClass("wrong");
           }
@@ -161,11 +170,13 @@ webApp.controller("AppController", function($scope, $sce, awardFactory) {
   $scope.activePageNum = 0;
   $scope.lessonNotFound = "";
   $scope.openTests = false;
+  // TODO refactor user stuff to be under one object
   $scope.userAwards = awardFactory.getAwards();
+  $scope.userLevel = JSD.level || 1;
   $scope.userPoints = {
     lessonPoints: [],
     currentTest: 0,
-    currentTestPecent: 0
+    currentTestPercent: 0
   }
   
   $scope.timer = {
